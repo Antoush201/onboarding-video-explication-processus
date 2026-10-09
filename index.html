@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Bienvenue chez OLA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Branding repris de ola-ai.ca : fond blanc cassé, noir, gris en transparence, Geist, pastilles et pilules. */
+:root{
+  --bg:#fafafa; --card:#f5f5f5; --white:#ffffff; --fg:#0a0a0a; --fg-2:#555555;
+  --fg-60:rgba(10,10,10,.6); --fg-40:rgba(10,10,10,.4); --fg-12:rgba(10,10,10,.12);
+  --border:rgba(215,215,215,.6); --border-solid:#d7d7d7;
+  --sans:"Geist","Geist Fallback",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Geist Mono","Geist Mono Fallback",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.22,1,.36,1);
+  color-scheme:light;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+
+.stage{position:relative;width:100vw;height:100vh;height:100dvh;overflow:hidden}
+
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+  padding:6vh 10vw 14vh;opacity:0;pointer-events:none;transition:opacity .5s var(--ease);background:var(--bg)}
+.slide.active{opacity:1;pointer-events:auto}
+.slide .inner{width:100%;max-width:980px;display:flex;flex-direction:column}
+
+.slide.active .reveal{animation:reveal .8s var(--ease) forwards}
+.reveal{opacity:0;transform:translateY(12px)}
+.reveal:nth-child(1){animation-delay:.1s}
+.reveal:nth-child(2){animation-delay:.25s}
+.reveal:nth-child(3){animation-delay:.4s}
+.reveal:nth-child(4){animation-delay:.55s}
+.reveal:nth-child(5){animation-delay:.7s}
+.reveal:nth-child(6){animation-delay:.85s}
+@keyframes reveal{to{opacity:1;transform:translateY(0)}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none}.slide.active .reveal{animation:none}.slide{transition:none}}
+
+/* Logo */
+.logo{height:104px;width:auto;display:block;margin-bottom:28px}
+
+/* Pastille, comme sur ola-ai.ca */
+.pill-tag{align-self:flex-start;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:var(--white);border-radius:999px;padding:7px 15px;font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:28px}
+.pill-tag i{width:6px;height:6px;border-radius:50%;background:var(--fg)}
+.pill-tag .n{font-family:var(--mono);font-weight:500}
+
+/* Typographie : titres en deux tons */
+h1{font-size:clamp(2.75rem,6vw,5.25rem);font-weight:600;letter-spacing:-.035em;line-height:1;text-wrap:balance}
+h2{font-size:clamp(2.25rem,5vw,4.25rem);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin-bottom:2.5rem;text-wrap:balance}
+h1 span,h2 span{display:block;color:var(--fg-2)}
+.subtitle{margin-top:1.5rem;font-size:clamp(1.15rem,2vw,1.6rem);color:var(--fg-2);line-height:1.4;max-width:760px}
+
+/* Liste d'étapes en carte */
+.bullets{list-style:none;background:var(--white);border:1px solid var(--border);border-radius:16px;padding:8px 28px}
+.bullets li{font-size:clamp(1.05rem,1.6vw,1.4rem);line-height:1.4;padding:18px 0;border-top:1px solid var(--border);display:flex;align-items:flex-start;gap:16px}
+.bullets li:first-child{border-top:0}
+.bullets svg{flex:none;width:24px;height:24px;margin-top:2px}
+.bullets small{display:block;font-size:.8em;color:var(--fg-60);margin-top:4px}
+
+/* Intro et fin centrées */
+.slide-center{align-items:center;text-align:center}
+.slide-center .inner{align-items:center}
+.slide-center .pill-tag{align-self:center}
+.slide-center .subtitle{margin-left:auto;margin-right:auto}
+
+.start{margin-top:2.5rem;display:inline-flex;align-items:center;gap:10px;background:var(--fg);color:var(--bg);border:0;border-radius:999px;padding:14px 28px;font:inherit;font-size:16px;font-weight:500;cursor:pointer;min-height:48px}
+.start:hover{opacity:.88}
+.start:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.start svg{width:16px;height:16px}
+
+/* Contrôles */
+.controls{position:fixed;bottom:max(2rem,env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:6px;z-index:100;
+  background:var(--white);border:1px solid var(--border);padding:6px;border-radius:999px;transition:opacity .3s ease}
+.controls.idle{opacity:.35}
+.nav{width:36px;height:36px;border-radius:999px;border:0;background:transparent;color:var(--fg);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.nav:hover{background:var(--card)}
+.nav:disabled{opacity:.25;cursor:default;background:transparent}
+.nav svg{width:16px;height:16px}
+.nav:focus-visible,.dot:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.dots{display:flex;gap:6px;padding:0 6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--fg-12);transition:all .3s var(--ease);cursor:pointer;border:0;padding:0}
+.dot.active{background:var(--fg);width:20px;border-radius:4px}
+.counter{white-space:nowrap;font-family:var(--mono);font-size:12px;color:var(--fg-60);min-width:48px;text-align:center;padding-right:6px}
+
+.hint{position:fixed;bottom:2.6rem;right:2rem;font-family:var(--mono);font-size:11px;color:var(--fg-40);z-index:100;transition:opacity .3s ease}
+.hint.idle{opacity:0}
+
+@media (max-width:768px){
+  .slide{padding:8vh 24px 18vh}
+  .logo{height:80px}
+  .bullets{padding:4px 18px}
+  .bullets li{padding:14px 0;gap:12px}
+  .bullets svg{width:20px;height:20px}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <!-- 1 : Intro -->
+  <section class="slide slide-center active" aria-label="Bienvenue">
+    <div class="inner">
+      <img class="logo reveal" src="data:image/webp;base64,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" alt="OLA">
+      <span class="pill-tag reveal"><i></i>Processus d'embarquement</span>
+      <h1 class="reveal">Bienvenue dans OLA.<span>Ton nouveau partenaire de business.</span></h1>
+      <button type="button" class="start reveal" data-next>Commencer
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M8.5 3.5L13 8l-4.5 4.5"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- 2 : Aperçu -->
+  <section class="slide" aria-label="Ce qui s'en vient">
+    <div class="inner">
+      <span class="pill-tag reveal"><i></i>3 étapes</span>
+      <h2 class="reveal">Voici ce qui s'en vient.<span>Un embarquement court et sans friction.</span></h2>
+    </div>
+  </section>
+
+  <!-- 3 : Étape 1 -->
+  <section class="slide" aria-label="Étape 1">
+    <div class="inner">
+      <span class="pill-tag reveal"><i></i>Étape <span class="n">1</span> sur 3</span>
+      <h2 class="reveal">On apprend à te connaître.</h2>
+      <ul class="bullets reveal">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke-opacity=".15"/><path d="M7.5 12.4l3 2.9 6-6.3"/></svg><span>Tu remplis un court formulaire avec tes infos</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke-opacity=".15"/><path d="M7.5 12.4l3 2.9 6-6.3"/></svg><span>On crée ton compte OLA sur mesure</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke-opacity=".15"/><path d="M7.5 12.4l3 2.9 6-6.3"/></svg><span>Tu reçois tes accès 24 à 48 h après l'envoi du formulaire</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 4 : Étape 2 -->
+  <section class="slide" aria-label="Étape 2">
+    <div class="inner">
+      <span class="pill-tag reveal"><i></i>Étape <span class="n">2</span> sur 3</span>
+      <h2 class="reveal">Quand tu es connecté sur OLA.</h2>
+      <ul class="bullets reveal">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke-opacity=".15"/><path d="M7.5 12.4l3 2.9 6-6.3"/></svg><span>Quelques connexions simples à faire de ton côté pour gagner du temps<small>On les révise ensemble au premier appel</small></span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke-opacity=".15"/><path d="M7.5 12.4l3 2.9 6-6.3"/></svg><span>Des vidéos explicatives pour te guider à chaque étape</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke-opacity=".15"/><path d="M7.5 12.4l3 2.9 6-6.3"/></svg><span>Tu explores ton CRM à ton rythme</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke-opacity=".15"/><path d="M7.5 12.4l3 2.9 6-6.3"/></svg><span>On t'accompagne de A à Z dans la personnalisation dès le premier appel</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 5 : Étape 3 -->
+  <section class="slide" aria-label="Étape 3">
+    <div class="inner">
+      <span class="pill-tag reveal"><i></i>Étape <span class="n">3</span> sur 3</span>
+      <h2 class="reveal">On configure ensemble.</h2>
+      <ul class="bullets reveal">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke-opacity=".15"/><path d="M7.5 12.4l3 2.9 6-6.3"/></svg><span>On personnalise ta plateforme à ta réalité</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke-opacity=".15"/><path d="M7.5 12.4l3 2.9 6-6.3"/></svg><span>Appels 1-1 avec les fondateurs tout au long de l'embarquement</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10.5" stroke-opacity=".15"/><path d="M7.5 12.4l3 2.9 6-6.3"/></svg><span>Accès à la communauté privée OLA</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 6 : Fin -->
+  <section class="slide slide-center" aria-label="C'est parti">
+    <div class="inner">
+      <img class="logo reveal" src="data:image/webp;base64,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" alt="OLA">
+      <h1 class="reveal">C'est parti.<span>On a hâte de te voir gagner du temps.</span></h1>
+    </div>
+  </section>
+
+  <div class="controls" id="controls">
+    <button type="button" class="nav" id="prev" aria-label="Diapositive précédente">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3.5L5.5 8l4.5 4.5"/></svg>
+    </button>
+    <div class="dots" id="dots"></div>
+    <span class="counter" id="counter">01 / 06</span>
+    <button type="button" class="nav" id="next" aria-label="Diapositive suivante">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3.5L10.5 8 6 12.5"/></svg>
+    </button>
+  </div>
+
+  <div class="hint" id="hint">← → pour naviguer · F plein écran</div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const dotsContainer = document.getElementById('dots');
+  const counter = document.getElementById('counter');
+  const controls = document.getElementById('controls');
+  const hint = document.getElementById('hint');
+  const stage = document.getElementById('stage');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  let current = 0;
+  let idleTimer;
+
+  slides.forEach((_, i) => {
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.className = 'dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', `Aller à la diapositive ${i + 1}`);
+    dot.addEventListener('click', () => goTo(i));
+    dotsContainer.appendChild(dot);
+  });
+  const dots = document.querySelectorAll('.dot');
+  const pad = n => String(n).padStart(2, '0');
+
+  function updateUI() {
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+    counter.textContent = `${pad(current + 1)} / ${pad(slides.length)}`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === slides.length - 1;
+  }
+
+  function goTo(i) {
+    if (i < 0 || i >= slides.length || i === current) return;
+    slides[current].classList.remove('active');
+    slides[i].querySelectorAll('.reveal').forEach(el => {
+      el.style.animation = 'none'; el.offsetHeight; el.style.animation = '';
+    });
+    current = i;
+    slides[current].classList.add('active');
+    updateUI();
+  }
+  const next = () => goTo(current + 1);
+  const prev = () => goTo(current - 1);
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+  document.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', e => { e.stopPropagation(); next(); }));
+
+  document.addEventListener('keydown', e => {
+    wake();
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'f' || e.key === 'F') { toggleFullscreen(); }
+    else if (e.key === 'Home') { goTo(0); }
+    else if (e.key === 'End') { goTo(slides.length - 1); }
+  });
+
+  // Clic n'importe où pour avancer (sauf sur les contrôles)
+  stage.addEventListener('click', e => {
+    if (e.target.closest('#controls, button, a')) return;
+    next();
+  });
+
+  // Glisser sur cellulaire
+  let x0 = null;
+  stage.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+    x0 = null;
+  });
+
+  // Les contrôles pâlissent quand la souris ne bouge pas
+  function wake() {
+    controls.classList.remove('idle'); hint.classList.remove('idle');
+    clearTimeout(idleTimer);
+    idleTimer = setTimeout(() => { controls.classList.add('idle'); hint.classList.add('idle'); }, 2500);
+  }
+  document.addEventListener('mousemove', wake);
+
+  function toggleFullscreen() {
+    try {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
+      else document.exitFullscreen();
+    } catch (e) {}
+  }
+
+  wake();
+  updateUI();
+</script>
+</body>
+</html>
